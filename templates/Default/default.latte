@@ -1,0 +1,153 @@
+{block content}
+
+<div class="row">
+	<div class="span12 page-header">
+		<div class="row">
+			<div class="span6">
+			<h1>
+				{$entity->name}
+				{if $tester->isLocked()}
+					<span class="label label-info">is building now</span>
+				{/if}
+			</h1>
+			</div>
+			<div class="span6">
+				
+				<div class="btn-group">
+
+					{if !$tester->isLocked()}
+					<a class="btn ajax" href="{link checkout!}"><i class="icon-download-alt"></i> Checkout</a>
+
+					{if $tester->isCloned()}
+					<a class="btn ajax" href="{link pull!}"><i class="icon-refresh"></i> Pull</a>
+					<a class="btn ajax" href="{link run!}"><i class="icon-play"></i> Run tests</a>
+					<a class="btn ajax" href="{link updateAll! hash=>$entity->hookLink}"><i class="icon-forward"></i> Update all</a>
+					{/if}
+
+					<a class="btn" href="{link settings!}"><i class="icon-cog"></i> Settings</a>
+					<a class="btn btn-danger" href="{link clean!}" n:confirm="Really clean?"><i class="icon-trash icon-white"></i> Clear</a>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="span8">
+		
+		<h2>Informations</h2>
+		<table class="table table-bordered table-striped">
+			<tbody>
+				<tr>
+					<th>Name</th>
+					<td>{$entity->name}</th>
+				<tr>
+				<tr>
+					<th>Repository</th>
+					<td>{$entity->repository}</th>
+				<tr>
+				<tr>
+					<th>Test path</th>
+					<td>{$entity->testDir}</th>
+				<tr>
+				<tr>
+					<th>Post-Receive URL</th>
+					<td>{link //this do=>updateAll, hash=>$entity->hookLink}{$entity->hash}</th>
+				<tr>
+				<tr>
+					<th>Created</th>
+					<td>{$entity->created|date:'%d.%m.%Y %H:%M:%S'}</th>
+				<tr>
+				<tr>
+					<th>Updated</th>
+					<td>{$entity->updated|date:'%d.%m.%Y %H:%M:%S'}</th>
+				<tr>
+			</tbody>
+		</table>
+</div>
+</div>
+
+  <ul class="nav nav-tabs">
+    <li{if $presenter->tab == "results"} class="active"{/if}><a class="ajax" href="{link tab! tab=>results}" data-toggle="tab">Results</a></li>
+    <li{if $presenter->tab == "errors"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>errors}" data-toggle="tab">Error results <span class="label label-info">{$entity->errors}</span></a></li>
+	<li{if $presenter->tab == "info"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>info}" data-toggle="tab">Info log</a></li>
+    <li{if $presenter->tab == "error"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>error}" data-toggle="tab">Error log</a></li>
+  </ul>
+    {snippet tab}
+	{if isset($showTab)}
+		{if $presenter->tab == "results" || $presenter->tab == "errors"}
+			{var $results=>$tester->getResults()}
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>Suite</th>
+						<th>Test Name</th>
+						<th>Result</th>
+						<th>Message</th>
+						<th>Assertions</th>
+						<th>Time</th>
+					</tr>
+				</thead>
+				<tbody>
+					{if is_array($results)}
+					{foreach $results as $test_result}
+
+					{continueIf $presenter->tab == "errors" && $test_result['result'] != 'Fail'}
+
+					<tr>
+						<td><span title="{$test_result['suite']}">{$test_result['suite']|truncate:40}</span></td>
+						<td>{$test_result['name']}</td>
+
+						{if $test_result['result'] == 'Fail'}
+						<td class="test_fail">Fail</td>
+						{else}
+						<td class="test_pass">Pass</td>
+						{/if}
+
+						<td><pre>{$test_result['message']}</pre></td>
+						<td>{$test_result['assertions']}</td>
+						<td>{$test_result['time']}</td>
+					</tr>
+					{/foreach}
+					{/if}
+
+					<tr class="totals">
+						<td colspan="3"></td>
+						<td>{$tester->tests}</td>
+						<td>{$tester->assertions}</td>
+						<td>{$tester->time} SEC</td>
+					</tr>
+				</tbody>
+			</table>
+		{elseif $presenter->tab == "info"}
+			<pre>
+				{$presenter->getInfoLog()}
+			</pre>
+		{elseif $presenter->tab == "error"}
+			<pre>
+				{$presenter->getErrorLog()}
+			</pre>
+		{/if}
+	{/if}
+	{/snippet}
+
+<script>
+
+function redirect()
+{
+	window.location = "{!=$presenter->link("this")}";
+}
+
+(function() {
+	$(".nav-tabs a").live("click", function(){
+		$(".nav-tabs li").removeClass("active");
+		$(this).parent().addClass("active");
+	});
+	$.get("{!=$presenter->link("tab!")}");
+
+	$(".btn-group a.ajax").live("click", function(){
+		setTimeout("redirect()",1000);
+	});
+})();
+</script>
