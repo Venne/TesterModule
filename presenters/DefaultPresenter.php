@@ -37,7 +37,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 			$driverClass = substr($driverClass, 0, $pos) . ucfirst($end);
 		}
 
-		$this->tester = new Services\Tester(new $driverClass, $this->page->name, $this->context->parameters["tempDir"] . "/repositories/" . Strings::webalize($this->page->name), "/", $this->context->parameters["tempDir"] . "/tests/" . Strings::webalize($this->page->name), $this->page->repository, $this->page->revision);
+		$this->tester = new Services\Tester(new $driverClass, $this->page->name, $this->context->parameters["tempDir"] . "/repositories/" . Strings::webalize($this->page->name), $this->page->testDir, $this->context->parameters["tempDir"] . "/tests/" . Strings::webalize($this->page->name), $this->page->repository, $this->page->revision);
 
 
 		$this->invalidateControl("tabs");
