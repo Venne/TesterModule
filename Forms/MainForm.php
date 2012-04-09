@@ -9,23 +9,26 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace TesterModule\Services\RepositoryDrivers;
+namespace TesterModule\Forms;
 
-use Venne;
-use Nette\Object;
-use TesterModule\Services\IRepositoryDriver;
+use Venne\Forms\Mapping\EntityFormMapper;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class GitSubmoduleDriver extends GitDriver implements IRepositoryDriver
+class MainForm extends \Venne\Forms\PageForm
 {
 
 
-
-	public function getCloneCommand($repository, $revision)
+	protected function getParams()
 	{
-		return parent::getCloneCommand($repository, $revision) . " && git submodule update --init";
+		return array(
+			"module" => "Tester",
+			"presenter" => "Main",
+			"action" => "default",
+			"url" => isset($this->entity->url) ? $this->entity->url : NULL
+		);
 	}
 
 }

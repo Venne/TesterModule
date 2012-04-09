@@ -19,8 +19,8 @@ use Venne;
 interface IRepositoryDriver
 {
 
-	public function getCloneCommand($repository, $revision, $info, $error);
+	public function getCloneCommand($repository, $revision);
 	
-	public function getPullCommand($repository, $revision, $info, $error);
+	public function getPullCommand($repository, $revision);
 	
 }

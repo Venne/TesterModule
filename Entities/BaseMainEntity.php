@@ -9,23 +9,14 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace TesterModule\Services\RepositoryDrivers;
+namespace TesterModule\Entities;
 
 use Venne;
-use Nette\Object;
-use TesterModule\Services\IRepositoryDriver;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class GitSubmoduleDriver extends GitDriver implements IRepositoryDriver
+class BaseMainEntity extends \CoreModule\Entities\BasePageEntity
 {
-
-
-
-	public function getCloneCommand($repository, $revision)
-	{
-		return parent::getCloneCommand($repository, $revision) . " && git submodule update --init";
-	}
-
+	
 }

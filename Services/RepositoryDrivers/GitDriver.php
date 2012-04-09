@@ -23,16 +23,23 @@ class GitDriver extends Object implements IRepositoryDriver
 
 
 
-	public function getCloneCommand($repository, $revision, $info, $error)
+	public function getCloneCommand($repository, $revision)
 	{
-		return "git clone -q {$repository} ./ > ". ($info ?: "/dev/null") ." 2>" . ($error ? : "&1") . " && git checkout {$revision} > ". ($info ?: "/dev/null") ." 2>" . ($error ? : "&1");
+		return "git clone {$repository} ./ && {$this->getCheckoutCommand($revision)}";
 	}
 
 
 
-	public function getPullCommand($repository, $revision, $info, $error)
+	public function getPullCommand($repository, $revision)
 	{
-		return "git pull -q > ".($info ?: "/dev/null")." 2> " . ($error ? : "&1");
+		return $this->getCheckoutCommand($revision);
+	}
+
+
+
+	protected function getCheckoutCommand($revision)
+	{
+		return "git fetch origin; git checkout origin/{$revision}";
 	}
 
 }

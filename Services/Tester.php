@@ -100,14 +100,14 @@ class Tester extends Object
 	public function checkoutRepository()
 	{
 		$this->cleanRepository();
-		$this->runCommand("cd {$this->repository} ; {$this->driver->getCloneCommand($this->remoteRepository, $this->revision, $this->getInfoFile(), $this->getErrorFile())}");
+		$this->runCommand("cd {$this->repository} ; {$this->driver->getCloneCommand($this->remoteRepository, $this->revision)}");
 	}
 
 
 
 	public function pullRepository()
 	{
-		$this->runCommand("cd {$this->repository} ; {$this->driver->getPullCommand($this->remoteRepository, $this->revision, $this->getInfoFile(), $this->getErrorFile())}");
+		$this->runCommand("cd {$this->repository} ; {$this->driver->getPullCommand($this->remoteRepository, $this->revision)}");
 	}
 
 
@@ -115,7 +115,7 @@ class Tester extends Object
 	public function runTest()
 	{
 		$resultDir = $this->getResultDir();
-		$this->runCommand("cd {$this->getTestDir()} ; phpunit --log-junit {$this->getResultFile()}");
+		$this->runCommand("cd {$this->getTestDir()} ; rm {$this->getResultFile()} ; phpunit --log-junit {$this->getResultFile()}");
 
 		$this->_xml = NULL;
 		foreach ($this->postHooks as $hook) {
@@ -220,7 +220,15 @@ class Tester extends Object
 			return NULL;
 		}
 
-		$simple = new \SimpleXMLElement($result);
+		\Nette\Diagnostics\Debugger::tryError();
+		try{
+			$simple = new \SimpleXMLElement($result);
+		}catch(\Exception $e){
+			return NULL;
+		}
+		if(\Nette\Diagnostics\Debugger::catchError($error)){
+			return NULL;
+		}
 
 		$test_results = array();
 		$assertions = 0;
@@ -293,8 +301,7 @@ class Tester extends Object
 
 	protected function runCommand($command)
 	{
-		$cmd = "touch {$this->resultDir}/lock ; {$command} ; rm {$this->resultDir}/lock";
-		//die($cmd);
+		$cmd = "touch {$this->resultDir}/lock ; sh -c '{$command}' > {$this->getInfoFile()} 2> {$this->getErrorFile()}; rm {$this->resultDir}/lock";
 		system($cmd);
 	}
 

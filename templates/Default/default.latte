@@ -24,7 +24,7 @@
 					<a class="btn ajax" href="{link updateAll! hash=>$entity->hookLink}"><i class="icon-forward"></i> Update all</a>
 					{/if}
 
-					<a class="btn" href="{link settings!}"><i class="icon-cog"></i> Settings</a>
+					{*<a class="btn" href="{link settings!}"><i class="icon-cog"></i> Settings</a>*}
 					<a class="btn btn-danger" href="{link clean!}" n:confirm="Really clean?"><i class="icon-trash icon-white"></i> Clear</a>
 					{/if}
 				</div>
@@ -48,6 +48,10 @@
 					<td>{$entity->repository}</th>
 				<tr>
 				<tr>
+					<th>Driver</th>
+					<td>{$entity->driver}</th>
+				<tr>
+				<tr>
 					<th>Test path</th>
 					<td>{$entity->testDir}</th>
 				<tr>
@@ -69,15 +73,14 @@
 </div>
 
   <ul class="nav nav-tabs">
-    <li{if $presenter->tab == "results"} class="active"{/if}><a class="ajax" href="{link tab! tab=>results}" data-toggle="tab">Results</a></li>
-    <li{if $presenter->tab == "errors"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>errors}" data-toggle="tab">Error results <span class="label label-info">{$entity->errors}</span></a></li>
-	<li{if $presenter->tab == "info"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>info}" data-toggle="tab">Info log</a></li>
-    <li{if $presenter->tab == "error"} class="active"{/if}><a class="ajax" class="ajax" href="{link tab! tab=>error}" data-toggle="tab">Error log</a></li>
+    <li{if $presenter->tab == "results"} class="active"{/if}><a class="ajax" href="{link this tab=>results}" data-toggle="tab">Results</a></li>
+    <li{if $presenter->tab == "errors"} class="active"{/if}><a class="ajax" class="ajax" href="{link this tab=>errors}" data-toggle="tab">Error results <span class="label label-info">{$entity->errors}</span></a></li>
+	<li{if $presenter->tab == "info"} class="active"{/if}><a class="ajax" class="ajax" href="{link this tab=>info}" data-toggle="tab">Info log</a></li>
+    <li{if $presenter->tab == "error"} class="active"{/if}><a class="ajax" class="ajax" href="{link this tab=>error}" data-toggle="tab">Error log</a></li>
   </ul>
     {snippet tab}
-	{if isset($showTab)}
 		{if $presenter->tab == "results" || $presenter->tab == "errors"}
-			{var $results=>$tester->getResults()}
+			{var $results=>$tester->isLocked() ? NULL : $tester->getResults()}
 			<table class="table table-bordered table-striped">
 				<thead>
 					<tr>
@@ -110,7 +113,12 @@
 						<td>{$test_result['time']}</td>
 					</tr>
 					{/foreach}
+					{else}
+					<tr>
+						<td colspan="6">result.xml not exists or is corupted</td>
+					</tr>
 					{/if}
+
 
 					<tr class="totals">
 						<td colspan="3"></td>
@@ -129,7 +137,6 @@
 				{$presenter->getErrorLog()}
 			</pre>
 		{/if}
-	{/if}
 	{/snippet}
 
 <script>
@@ -144,7 +151,6 @@ function redirect()
 		$(".nav-tabs li").removeClass("active");
 		$(this).parent().addClass("active");
 	});
-	$.get("{!=$presenter->link("tab!")}");
 
 	$(".btn-group a.ajax").live("click", function(){
 		setTimeout("redirect()",1000);

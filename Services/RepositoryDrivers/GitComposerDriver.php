@@ -23,9 +23,9 @@ class GitComposerDriver extends GitDriver implements IRepositoryDriver
 
 
 
-	public function getCloneCommand($repository, $revision, $info, $error)
+	public function getCloneCommand($repository, $revision)
 	{
-		return parent::getCloneCommand($repository, $revision, $info, $error) . " && curl -s http://getcomposer.org/installer 2>" . ($error ? : "&1") . " | php && php composer.phar install > " . ($info ? : "/dev/null") . " 2>" . ($error ? : "&1");
+		return parent::getCloneCommand($repository, $revision) . " && curl -s http://getcomposer.org/installer | php && php composer.phar install";
 	}
 
 }

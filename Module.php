@@ -36,6 +36,11 @@ class Module extends \Venne\Module\BaseModule
 		{
 			return $container->tester->createTesterForm();
 		});
+		
+		$container->core->cmsManager->addContentType(Entities\MainEntity::LINK, "list of testers", array("url"), $container->tester->mainRepository, function() use($container)
+		{
+			return $container->tester->createMainForm();
+		});
 	}
 
 }

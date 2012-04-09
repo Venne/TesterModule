@@ -40,7 +40,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 		$this->tester = new Services\Tester(new $driverClass, $this->page->name, $this->context->parameters["tempDir"] . "/repositories/" . Strings::webalize($this->page->name), $this->page->testDir, $this->context->parameters["tempDir"] . "/tests/" . Strings::webalize($this->page->name), $this->page->repository, $this->page->revision);
 
 
-		$this->invalidateControl("tabs");
+		$this->invalidateControl("tab");
 	}
 
 
@@ -59,11 +59,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 		$this->context->entityManager->flush();
 		
 		if($redirect){
-			//if($this->isAjax()){
-			//	$this->terminate();
-			//}else{
-				$this->redirect("this");
-			//}
+			$this->redirect("this");
 		}
 	}
 
@@ -76,11 +72,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 		
 		$this->tester->checkoutRepository();
 		
-		if($this->isAjax()){
-			$this->terminate();
-		}else{
-			$this->redirect("this");
-		}
+		$this->redirect("this");
 	}
 
 
@@ -92,11 +84,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 		
 		$this->tester->pullRepository();
 		
-		if($this->isAjax()){
-			$this->terminate();
-		}else{
-			$this->redirect("this");
-		}
+		$this->redirect("this");
 	}
 
 
@@ -112,11 +100,7 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 		
 		$this->handleRun(false);
 		
-		if($this->isAjax()){
-			$this->terminate();
-		}else{
-			$this->redirect("this");
-		}
+		$this->redirect("this");
 	}
 
 
@@ -150,16 +134,6 @@ class DefaultPresenter extends \CoreModule\Presenters\PagePresenter
 	
 	
 	
-	public function handleTab()
-	{
-		$this->template->showTab = true;
-		$this->invalidateControl("tab");
-		
-		$this->validateControl("tabs");
-	}
-
-
-
 	public function renderDefault()
 	{
 		$this->template->isLocked = $this->tester->isLocked();
