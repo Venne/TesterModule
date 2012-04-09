@@ -79,6 +79,9 @@ class BaseEntity extends \CoreModule\Entities\BasePageEntity
 		$this->created = new \Nette\DateTime;
 		$this->updated = new \Nette\DateTime;
 		$this->errors = 0;
+		$this->tests = 0;
+		$this->assertions = 0;
+		$this->time = 0;
 	}
 
 
